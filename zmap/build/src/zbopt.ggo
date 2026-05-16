@@ -7,7 +7,7 @@
 # zblocklist option description to be processed by gengetopt
 
 package "zblocklist"
-version "Development Build. Commit 3b8c19e - Fri May 15 15:47:13 2026 +0200"
+version "Development Build. Commit 1fc01ef - Fri May 15 16:25:00 2026 +0200"
 purpose "A tool for limiting and deduplicating a list of IP addresses"
 
 section "Basic arguments"

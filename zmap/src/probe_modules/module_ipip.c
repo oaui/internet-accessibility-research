@@ -185,6 +185,10 @@ int ipip_make_packet(void *buf, size_t *buf_len, ipaddr_n_t src_ip,
 	udp_header->uh_sport =
 	    htons(get_src_port(num_ports, probe_num, validation));
 	udp_header->uh_dport = dport;
+	udp_header->uh_sum = 0;
+	udp_header->uh_sum =
+	    udp_checksum(ntohs(udp_header->uh_ulen), ip_header2->ip_src.s_addr,
+			 ip_header2->ip_dst.s_addr, udp_header);
 
 	ip_header2->ip_sum = 0;
 	ip_header2->ip_sum = zmap_ip_checksum((unsigned short *)ip_header2);

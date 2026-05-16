@@ -318,6 +318,10 @@ int udp_make_packet(void *buf, size_t *buf_len, ipaddr_n_t src_ip,
 	udp_header->uh_sport =
 	    htons(get_src_port(num_ports, probe_num, validation));
 	udp_header->uh_dport = dport;
+	udp_header->uh_sum = 0;
+	udp_header->uh_sum =
+	    udp_checksum(ntohs(udp_header->uh_ulen), ip_header->ip_src.s_addr,
+			 ip_header->ip_dst.s_addr, udp_header);
 
 	ip_header->ip_id = ip_id;
 	ip_header->ip_sum = 0;
@@ -367,7 +371,12 @@ int udp_make_templated_packet(void *buf, size_t *buf_len, ipaddr_n_t src_ip,
 	// Update the IP and UDP headers to match the new payload length
 	ip_header->ip_len =
 	    htons(sizeof(struct ip) + sizeof(struct udphdr) + payload_len);
-	udp_header->uh_ulen = ntohs(sizeof(struct udphdr) + payload_len);
+	udp_header->uh_ulen = htons(sizeof(struct udphdr) + payload_len);
+	udp_header->uh_sum = 0;
+	udp_header->uh_sum =
+	    udp_checksum(sizeof(struct udphdr) + payload_len,
+			 ip_header->ip_src.s_addr, ip_header->ip_dst.s_addr,
+			 udp_header);
 
 	ip_header->ip_sum = 0;
 	ip_header->ip_id = ip_id;

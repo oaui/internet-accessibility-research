@@ -144,6 +144,44 @@ static inline uint16_t tcp_checksum(unsigned short len_tcp, uint32_t saddr,
 	return (unsigned short)(~sum);
 }
 
+static inline uint16_t udp_checksum(unsigned short len_udp, uint32_t saddr,
+				    uint32_t daddr, struct udphdr *udp_pkt)
+{
+	alias_unsigned_short *src_addr = (alias_unsigned_short *)&saddr;
+	alias_unsigned_short *dest_addr = (alias_unsigned_short *)&daddr;
+
+	unsigned char prot_udp = IPPROTO_UDP;
+	unsigned long sum = 0;
+	int nleft = len_udp;
+	unsigned short *w;
+
+	w = (unsigned short *)udp_pkt;
+	// calculate checksum over UDP header and UDP payload
+	while (nleft > 1) {
+		sum += *w++;
+		nleft -= 2;
+	}
+	// if nleft is 1 there is still one byte left.
+	// We add a padding byte (0x00) in the low byte to form a 16-bit word.
+	if (nleft > 0) {
+		sum += *w & ntohs(0xFF00);
+	}
+
+	// add pseudo header
+	sum += src_addr[0];
+	sum += src_addr[1];
+	sum += dest_addr[0];
+	sum += dest_addr[1];
+	sum += htons(len_udp);
+	sum += htons(prot_udp);
+	sum = (sum >> 16) + (sum & 0xFFFF);
+	sum += (sum >> 16);
+
+	// RFC 768: if computed checksum is 0x0000, transmit as 0xFFFF
+	uint16_t csum = (unsigned short)(~sum);
+	return (csum == 0) ? 0xFFFF : csum;
+}
+
 // Returns 0 if dst_port is outside the expected valid range, non-zero otherwise
 static inline int check_dst_port(uint16_t port, int num_ports,
 				 uint32_t *validation)
