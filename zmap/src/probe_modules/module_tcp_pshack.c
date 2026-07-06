@@ -53,7 +53,6 @@ static int pshack_global_initialize(struct state_conf *state)
 		} else if (strcmp(args, "file") == 0) {
 			FILE *inp = fopen(c, "rb");
 			if (!inp) {
-				free(args);
 				log_fatal("tcp_pshack", "could not open payload file '%s'", c);
 			}
 			free(tcp_pshack_payload);
@@ -209,12 +208,9 @@ static void pshack_process_packet(const u_char *packet, uint32_t len,
 	if (tcp->th_flags & TH_RST) {
 		fs_add_constchar(fs, "classification", "rst");
 		fs_add_bool(fs, "success", 0);
-	} else if (data_len > 128) {
-		fs_add_constchar(fs, "classification", "middlebox");
-		fs_add_bool(fs, "success", 1);
 	} else {
 		fs_add_constchar(fs, "classification", "data");
-		fs_add_bool(fs, "success", 0);
+		fs_add_bool(fs, "success", 1);
 	}
 }
 

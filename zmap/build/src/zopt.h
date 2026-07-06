@@ -31,7 +31,7 @@ extern "C" {
 
 #ifndef CMDLINE_PARSER_VERSION
 /** @brief the program version */
-#define CMDLINE_PARSER_VERSION "Development Build. Commit 1fc01ef - Fri May 15 16:25:00 2026 +0200"
+#define CMDLINE_PARSER_VERSION "Development Build. Commit b45c18d - Thu Jul 2 22:14:32 2026 +0200"
 #endif
 
 /** @brief Where the command line options are stored */
@@ -179,6 +179,9 @@ struct gengetopt_args_info
   float min_hitrate_arg;	/**< @brief Minimum hitrate that scan can hit before scan is aborted (default='0.0').  */
   char * min_hitrate_orig;	/**< @brief Minimum hitrate that scan can hit before scan is aborted original value given at command line.  */
   const char *min_hitrate_help; /**< @brief Minimum hitrate that scan can hit before scan is aborted help description.  */
+  int min_response_size_arg;	/**< @brief Minimum IPv4 response size in bytes to process; 0 disables this filter (default='0').  */
+  char * min_response_size_orig;	/**< @brief Minimum IPv4 response size in bytes to process; 0 disables this filter original value given at command line.  */
+  const char *min_response_size_help; /**< @brief Minimum IPv4 response size in bytes to process; 0 disables this filter help description.  */
   int sender_threads_arg;	/**< @brief Threads used to send packets (default='4').  */
   char * sender_threads_orig;	/**< @brief Threads used to send packets original value given at command line.  */
   const char *sender_threads_help; /**< @brief Threads used to send packets help description.  */
@@ -241,6 +244,7 @@ struct gengetopt_args_info
   unsigned int config_given ;	/**< @brief Whether config was given.  */
   unsigned int max_sendto_failures_given ;	/**< @brief Whether max-sendto-failures was given.  */
   unsigned int min_hitrate_given ;	/**< @brief Whether min-hitrate was given.  */
+  unsigned int min_response_size_given ;	/**< @brief Whether min-response-size was given.  */
   unsigned int sender_threads_given ;	/**< @brief Whether sender-threads was given.  */
   unsigned int cores_given ;	/**< @brief Whether cores was given.  */
   unsigned int ignore_blocklist_errors_given ;	/**< @brief Whether ignore-blocklist-errors was given.  */

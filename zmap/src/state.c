@@ -43,6 +43,7 @@ struct state_conf zconf = {
     .metadata_file = NULL,
     .metadata_filename = NULL,
     .min_hitrate = 0.0,
+    .min_response_size = 0,
     .no_header_row = 0,
     .notes = NULL,
     .number_source_ips = 0,

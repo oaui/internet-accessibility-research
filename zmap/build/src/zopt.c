@@ -95,6 +95,7 @@ const char *gengetopt_args_info_help[] = {
   "  -C, --config=filename         Read a configuration file, which can specify\n                                  any of these options\n                                  (default=`/etc/zmap/zmap.conf')",
   "      --max-sendto-failures=n   Maximum NIC sendto failures before scan is\n                                  aborted  (default=`-1')",
   "      --min-hitrate=n           Minimum hitrate that scan can hit before scan\n                                  is aborted  (default=`0.0')",
+  "      --min-response-size=bytes Minimum IPv4 response size in bytes to process;\n                                  0 disables this filter  (default=`0')",
   "  -T, --sender-threads=n        Threads used to send packets  (default=`4')",
   "      --cores=STRING            Comma-separated list of cores to pin to",
   "      --ignore-blocklist-errors Ignore invalid entries in allowlist/blocklist\n                                  file.",
@@ -203,6 +204,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->config_given = 0 ;
   args_info->max_sendto_failures_given = 0 ;
   args_info->min_hitrate_given = 0 ;
+  args_info->min_response_size_given = 0 ;
   args_info->sender_threads_given = 0 ;
   args_info->cores_given = 0 ;
   args_info->ignore_blocklist_errors_given = 0 ;
@@ -295,6 +297,8 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->max_sendto_failures_orig = NULL;
   args_info->min_hitrate_arg = 0.0;
   args_info->min_hitrate_orig = NULL;
+  args_info->min_response_size_arg = 0;
+  args_info->min_response_size_orig = NULL;
   args_info->sender_threads_arg = 4;
   args_info->sender_threads_orig = NULL;
   args_info->cores_arg = NULL;
@@ -359,11 +363,12 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->config_help = gengetopt_args_info_help[58] ;
   args_info->max_sendto_failures_help = gengetopt_args_info_help[59] ;
   args_info->min_hitrate_help = gengetopt_args_info_help[60] ;
-  args_info->sender_threads_help = gengetopt_args_info_help[61] ;
-  args_info->cores_help = gengetopt_args_info_help[62] ;
-  args_info->ignore_blocklist_errors_help = gengetopt_args_info_help[63] ;
-  args_info->help_help = gengetopt_args_info_help[64] ;
-  args_info->version_help = gengetopt_args_info_help[65] ;
+  args_info->min_response_size_help = gengetopt_args_info_help[61] ;
+  args_info->sender_threads_help = gengetopt_args_info_help[62] ;
+  args_info->cores_help = gengetopt_args_info_help[63] ;
+  args_info->ignore_blocklist_errors_help = gengetopt_args_info_help[64] ;
+  args_info->help_help = gengetopt_args_info_help[65] ;
+  args_info->version_help = gengetopt_args_info_help[66] ;
   
 }
 
@@ -527,6 +532,7 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->config_orig));
   free_string_field (&(args_info->max_sendto_failures_orig));
   free_string_field (&(args_info->min_hitrate_orig));
+  free_string_field (&(args_info->min_response_size_orig));
   free_string_field (&(args_info->sender_threads_orig));
   free_string_field (&(args_info->cores_arg));
   free_string_field (&(args_info->cores_orig));
@@ -669,6 +675,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "max-sendto-failures", args_info->max_sendto_failures_orig, 0);
   if (args_info->min_hitrate_given)
     write_into_file(outfile, "min-hitrate", args_info->min_hitrate_orig, 0);
+  if (args_info->min_response_size_given)
+    write_into_file(outfile, "min-response-size", args_info->min_response_size_orig, 0);
   if (args_info->sender_threads_given)
     write_into_file(outfile, "sender-threads", args_info->sender_threads_orig, 0);
   if (args_info->cores_given)
@@ -999,6 +1007,7 @@ cmdline_parser_internal (
         { "config",	1, NULL, 'C' },
         { "max-sendto-failures",	1, NULL, 0 },
         { "min-hitrate",	1, NULL, 0 },
+        { "min-response-size",	1, NULL, 0 },
         { "sender-threads",	1, NULL, 'T' },
         { "cores",	1, NULL, 0 },
         { "ignore-blocklist-errors",	0, NULL, 0 },
@@ -1717,6 +1726,20 @@ cmdline_parser_internal (
                 &(local_args_info.min_hitrate_given), optarg, 0, "0.0", ARG_FLOAT,
                 check_ambiguity, override, 0, 0,
                 "min-hitrate", '-',
+                additional_error))
+              goto failure;
+          
+          }
+          /* Minimum IPv4 response size in bytes to process; 0 disables this filter.  */
+          else if (strcmp (long_options[option_index].name, "min-response-size") == 0)
+          {
+          
+          
+            if (update_arg( (void *)&(args_info->min_response_size_arg), 
+                 &(args_info->min_response_size_orig), &(args_info->min_response_size_given),
+                &(local_args_info.min_response_size_given), optarg, 0, "0", ARG_INT,
+                check_ambiguity, override, 0, 0,
+                "min-response-size", '-',
                 additional_error))
               goto failure;
           

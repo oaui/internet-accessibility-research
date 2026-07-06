@@ -7,7 +7,7 @@
 # zmap option description to be processed by gengetopt
 
 package "zmap"
-version "Development Build. Commit 1fc01ef - Fri May 15 16:25:00 2026 +0200"
+version "Development Build. Commit b45c18d - Thu Jul 2 22:14:32 2026 +0200"
 purpose "A fast Internet-wide scanner."
 
 section "Basic Arguments"
@@ -195,6 +195,11 @@ option "min-hitrate"            - "Minimum hitrate that scan can hit before scan
     typestr="n"
     default="0.0"
     optional float
+
+option "min-response-size"      - "Minimum IPv4 response size in bytes to process; 0 disables this filter"
+    typestr="bytes"
+    default="0"
+    optional int
 
 option "sender-threads"         T "Threads used to send packets"
     typestr="n"

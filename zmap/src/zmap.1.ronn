@@ -268,6 +268,10 @@ targets.
    * `--min-hitrate`:
      Minimum hitrate that scan can hit before scan is aborted
 
+   * `--min-response-size=bytes`:
+     Minimum IPv4 response size in bytes to process. Use 0 to disable this
+     filter.
+
    * `--cores`:
      Comma-separated list of cores to pin to
 

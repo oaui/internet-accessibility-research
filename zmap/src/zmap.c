@@ -589,9 +589,15 @@ int main(int argc, char *argv[])
 	SET_IF_GIVEN(zconf.retries, retries);
 	SET_IF_GIVEN(zconf.max_sendto_failures, max_sendto_failures);
 	SET_IF_GIVEN(zconf.min_hitrate, min_hitrate);
+	SET_IF_GIVEN(zconf.min_response_size, min_response_size);
 
 	if (zconf.retries < 0) {
 		log_fatal("zmap", "Invalid retry count");
+	}
+	if (zconf.min_response_size < 0 ||
+	    zconf.min_response_size > UINT16_MAX) {
+		log_fatal("zmap",
+			  "Invalid min-response-size: must be between 0 and 65535");
 	}
 
 	if (zconf.max_sendto_failures >= 0) {
@@ -603,6 +609,11 @@ int main(int argc, char *argv[])
 	if (zconf.min_hitrate > 0.0) {
 		log_debug("zmap", "scan will abort if hitrate falls below %f",
 			  zconf.min_hitrate);
+	}
+	if (zconf.min_response_size > 0) {
+		log_debug("zmap",
+			  "responses smaller than %i bytes will be ignored",
+			  zconf.min_response_size);
 	}
 	if (args.metadata_file_arg) {
 		zconf.metadata_filename = args.metadata_file_arg;

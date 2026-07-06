@@ -46,6 +46,11 @@ void handle_packet(uint32_t buflen, const u_char *bytes,
 	uint32_t src_ip = ip_hdr->ip_src.s_addr;
 	uint16_t src_port = 0;
 
+	if (zconf.min_response_size &&
+	    (int)ntohs(ip_hdr->ip_len) < zconf.min_response_size) {
+		return;
+	}
+
 	uint32_t len_ip_and_payload =
 	    buflen - (zconf.send_ip_pkts ? 0 : sizeof(struct ether_header));
 	// extract port if TCP or UDP packet to both generate validation data and to

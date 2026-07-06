@@ -133,6 +133,7 @@ struct state_conf {
 	uint64_t total_disallowed;
 	int max_sendto_failures;
 	float min_hitrate;
+	int min_response_size;
 	int data_link_size;
 	int default_mode;
 	int no_header_row;
